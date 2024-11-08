@@ -1,3 +1,9 @@
+/*
+Package totp implements Time-based One-Time Password (TOTP) generation and validation.
+
+TOTP is an algorithm that computes a one-time password from a shared secret key and the current time.
+This package provides functions to generate a TOTP secret, generate TOTP codes, and validate them.
+*/
 package totp
 
 import (
@@ -13,6 +19,8 @@ import (
 )
 
 // GenerateSecret generates a random TOTP secret key in base32 encoding.
+// The length of the generated secret is fixed to 10 bytes.
+// It returns the base32-encoded secret and an error if the generation fails.
 func GenerateSecret() (string, error) {
 	
     secretLength := 10
@@ -32,7 +40,9 @@ func GenerateSecret() (string, error) {
 	return secret, nil
 }
 
-// TOTP generates a 6-digit TOTP code using the given base32-encoded secret and a time step of 30 seconds.
+// TOTP generates a 6-digit TOTP code using the given base32-encoded secret
+// and a time step in seconds (default is 30 seconds).
+// It returns the generated TOTP code and an error if the generation fails.
 func TOTP(secret string, duration int) (string, error) {
 	// Decode the base32-encoded secret
 	secret = strings.ToUpper(secret) // TOTP secrets are usually upper-case
@@ -43,7 +53,9 @@ func TOTP(secret string, duration int) (string, error) {
     return generateTOTP(secret, timestamp, duration)
 }
 
-// ValidateTOTP checks if the provided code matches the generated TOTP code for the given secret
+// Validate checks if the provided TOTP code matches the generated TOTP code
+// for the given secret within a +/- 30-second time window.
+// It returns true if the code is valid, otherwise false.
 func Validate(secret string, duration int, code string) bool {
     if duration < 1 {
         duration = 30
@@ -68,7 +80,9 @@ func Validate(secret string, duration int, code string) bool {
 	return false
 }
 
-// generateTOTP generates a TOTP code for the current timestamp
+// generateTOTP generates a TOTP code for the specified timestamp.
+// It takes a base32-encoded secret, a timestamp, and a duration in seconds.
+// It returns the generated TOTP code and an error if the generation fails.
 func generateTOTP(secret string, timestamp int64, duration int) (string, error) {
 	// Decode the base32-encoded secret
 	secret = strings.ToUpper(secret) // TOTP secrets are usually upper-case
