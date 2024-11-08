@@ -7,14 +7,18 @@ import (
 )
 
 func main() {
-	secret, _ := totp.GenerateSecret()
+	secret, err := totp.GenerateSecret()
+    if err != nil {
+        fmt.Println("Error generating secret:", err)
+        return
+    }
     duration := 30
-	code, err := totp.TOTP(secret, duration)
+	otp, err := totp.TOTP(secret, duration)
 	if err != nil {
 		fmt.Println("Error generating TOTP:", err)
 		return
 	}
-	fmt.Println("Generated TOTP Code:", code)
-    fmt.Println("Verify:", totp.Validate(secret, duration, code))
+	fmt.Println("Generated TOTP Code:", otp)
+    fmt.Println("Verify:", totp.Validate(secret, duration, otp))
 }
 
